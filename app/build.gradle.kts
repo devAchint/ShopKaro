@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.dagger.hilt.android)
+    alias(libs.plugins.jetbrains.kotlin.kapt)
 }
 
 android {
@@ -72,4 +74,19 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     //compose material
     implementation(libs.androidx.material)
+
+    //retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    //coroutines
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    //hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.compiler)
+
+}
+kapt {
+    correctErrorTypes = true
 }
