@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.shopkaro.R
-import java.util.Vector
 
 @Composable
 fun BottomNavGraph(navController: NavHostController, modifier: Modifier) {
@@ -22,7 +21,7 @@ fun BottomNavGraph(navController: NavHostController, modifier: Modifier) {
     ) {
         homeNavGraph(navController, modifier)
         profileNavGraph(modifier)
-        cartNavGraph()
+        cartNavGraph(navController)
     }
 }
 

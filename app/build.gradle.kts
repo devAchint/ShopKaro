@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -90,6 +91,9 @@ dependencies {
 
     //coil
     implementation(libs.coil.compose)
+
+    //lottie
+    implementation (libs.lottie.compose)
 
 }
 kapt {
