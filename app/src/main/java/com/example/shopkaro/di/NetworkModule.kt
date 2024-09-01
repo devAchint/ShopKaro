@@ -1,6 +1,7 @@
 package com.example.shopkaro.di
 
 import com.example.shopkaro.NetworkApi
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,5 +26,11 @@ class NetworkModule {
     @Provides
     fun providesApi(retrofit: Retrofit): NetworkApi {
         return retrofit.create(NetworkApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
     }
 }

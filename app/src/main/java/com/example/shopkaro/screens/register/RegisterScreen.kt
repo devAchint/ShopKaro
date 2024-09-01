@@ -1,4 +1,4 @@
-package com.example.shopkaro.screens
+package com.example.shopkaro.screens.register
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -9,49 +9,43 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.shopkaro.R
-import com.example.shopkaro.screens.register.RegisterUiState
-
 
 @Composable
-fun LoginScreen(
-    loginUiState: RegisterUiState,
-    navigateToRegister: () -> Unit,
+fun RegisterScreen(
+    registerUiState: RegisterUiState,
+    registerUser: (email: String, password: String) -> Unit,
     navigateToHome: () -> Unit,
-    login: (email: String, password: String) -> Unit
+    navigateToLogin: () -> Unit
 ) {
     val context = LocalContext.current
-    if (loginUiState.success) {
-        Toast.makeText(context, "Login success", Toast.LENGTH_SHORT).show()
+    if (registerUiState.success) {
+        Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT).show()
         navigateToHome()
     }
-    loginUiState.errorMessage?.let {
-        Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
+    registerUiState.errorMessage?.let {
+        Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
     }
     Scaffold { innerPadding ->
         Column(
@@ -61,15 +55,12 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(80.dp))
-            Text(text = "Hello Again!", fontSize = 32.sp)
-            Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = "Welcome back you've\nbeen missed!",
-                fontSize = 24.sp,
+                text = "Sign Up",
+                fontSize = 32.sp,
                 modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .align(Alignment.CenterHorizontally),
-                textAlign = TextAlign.Center
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(24.dp))
             var emailText by rememberSaveable { mutableStateOf("") }
@@ -92,7 +83,6 @@ fun LoginScreen(
             )
             Spacer(modifier = Modifier.height(12.dp))
             var passwordText by rememberSaveable { mutableStateOf("") }
-            var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
             TextField(
                 value = passwordText, modifier = Modifier
@@ -102,15 +92,8 @@ fun LoginScreen(
                     passwordText = it
                 },
                 singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
                 placeholder = { Text(text = "Password") },
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    val icon =
-                        if (passwordVisible) R.drawable.visibility else R.drawable.visibility_off
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(painter = painterResource(id = icon), contentDescription = "")
-                    }
-                },
                 shape = RoundedCornerShape(8.dp),
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
@@ -118,11 +101,46 @@ fun LoginScreen(
                     disabledIndicatorColor = Color.Transparent
                 )
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
+            var confirmPasswordText by rememberSaveable { mutableStateOf("") }
+            val passwordMatched = remember {
+                derivedStateOf {
+                    passwordText == confirmPasswordText
+                }
+            }
+            TextField(
+                value = confirmPasswordText, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                onValueChange = {
+                    confirmPasswordText = it
+                },
+                singleLine = true,
+                visualTransformation = PasswordVisualTransformation(),
+                placeholder = { Text(text = "Confirm Password") },
+                shape = RoundedCornerShape(8.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent
+                )
+            )
+
+            if (!passwordMatched.value) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Password not matched",
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth()
+                )
+            }
             Spacer(modifier = Modifier.height(20.dp))
             Button(
                 onClick = {
-                    if (emailText.isNotEmpty() && passwordText.isNotEmpty()) {
-                        login(emailText, passwordText)
+                    if (emailText.isNotEmpty() && passwordMatched.value) {
+                        registerUser(emailText, confirmPasswordText)
                     }
                 },
                 modifier = Modifier
@@ -131,19 +149,22 @@ fun LoginScreen(
                     .height(50.dp),
                 shape = RoundedCornerShape(10.dp),
             ) {
-                Text(text = if (loginUiState.isLoading) "Loading" else "Sign In", fontSize = 18.sp)
+                if (registerUiState.isLoading) {
+                    Text(text = "Loading...", fontSize = 18.sp)
+                } else {
+                    Text(text = "Sign Up", fontSize = 18.sp)
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(modifier = Modifier.clickable { navigateToRegister() },
+            Text(modifier = Modifier.clickable { navigateToLogin() },
                 text = buildAnnotatedString {
-                    append("Not a member? ")
+                    append("Already have an account? ")
 
                     withStyle(style = SpanStyle(color = Color.Blue)) {
-                        append("Register Now")
+                        append("Login Now")
                     }
                 }
             )
         }
     }
-
 }

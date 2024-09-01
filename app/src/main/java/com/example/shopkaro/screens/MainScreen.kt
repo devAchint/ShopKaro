@@ -1,6 +1,7 @@
 package com.example.shopkaro.screens
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
@@ -21,20 +22,21 @@ import com.example.shopkaro.graphs.CartScreens
 import com.example.shopkaro.graphs.HomeScreens
 import com.example.shopkaro.graphs.ProfileScreens
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    Scaffold(bottomBar = {
+    Scaffold(
+        bottomBar = {
         if (navBackStackEntry?.destination?.route == HomeScreens.HomeScreen.route
             || navBackStackEntry?.destination?.route == ProfileScreens.ProfileScreen.route
             || navBackStackEntry?.destination?.route == CartScreens.CartScreen.route
         ) {
             BottomBar(navController = navController)
         }
-    }) {
-        BottomNavGraph(navController = navController, modifier = Modifier)
+    }) {innerPadding->
+        BottomNavGraph(navController = navController, modifier = Modifier.padding(innerPadding))
     }
 }
 
@@ -61,7 +63,7 @@ fun BottomBar(navController: NavHostController) {
                         restoreState = true
                     }
                 },
-                icon = { Icon(Icons.Filled.Favorite, contentDescription = "") })
+                icon = { Icon(screen.icon, contentDescription = "") })
         }
 
     }

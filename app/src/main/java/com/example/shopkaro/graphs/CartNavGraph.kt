@@ -4,9 +4,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.example.shopkaro.screens.CartScreen
-import com.example.shopkaro.screens.HomeScreen
-import com.example.shopkaro.screens.ProductScreen
-import com.example.shopkaro.screens.ProfileScreen
 
 fun NavGraphBuilder.cartNavGraph() {
     navigation(

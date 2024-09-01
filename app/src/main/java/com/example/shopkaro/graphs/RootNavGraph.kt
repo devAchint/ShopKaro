@@ -5,14 +5,15 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.shopkaro.screens.MainScreen
+import com.google.firebase.auth.FirebaseUser
 
 
 @Composable
-fun RootNavGraph(navController: NavHostController) {
+fun RootNavGraph(navController: NavHostController, currentUser: FirebaseUser?) {
     NavHost(
         navController = navController,
         route = Graph.ROOT,
-        startDestination = Graph.AUTHENTICATION
+        startDestination = if (currentUser != null) "main" else Graph.AUTHENTICATION
     ) {
         authNavGraph(navController)
         composable(route = "main") {
