@@ -32,7 +32,7 @@ import com.example.shopkaro.ui.theme.Purple80
 @Composable
 fun ProfileScreen(profileUiState: ProfileUiState, modifier: Modifier, signOut: () -> Unit) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally

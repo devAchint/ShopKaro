@@ -1,11 +1,9 @@
 package com.example.shopkaro.screens
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -27,15 +25,15 @@ import com.example.shopkaro.graphs.ProfileScreens
 fun MainScreen() {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    Scaffold(
+    Scaffold(modifier = Modifier.statusBarsPadding(),
         bottomBar = {
-        if (navBackStackEntry?.destination?.route == HomeScreens.HomeScreen.route
-            || navBackStackEntry?.destination?.route == ProfileScreens.ProfileScreen.route
-            || navBackStackEntry?.destination?.route == CartScreens.CartScreen.route
-        ) {
-            BottomBar(navController = navController)
-        }
-    }) {innerPadding->
+            if (navBackStackEntry?.destination?.route == HomeScreens.HomeScreen.route
+                || navBackStackEntry?.destination?.route == ProfileScreens.ProfileScreen.route
+                || navBackStackEntry?.destination?.route == CartScreens.CartScreen.route
+            ) {
+                BottomBar(navController = navController)
+            }
+        }) { innerPadding ->
         BottomNavGraph(navController = navController, modifier = Modifier.padding(innerPadding))
     }
 }
