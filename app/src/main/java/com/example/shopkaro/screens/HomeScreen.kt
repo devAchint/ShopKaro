@@ -1,6 +1,5 @@
 package com.example.shopkaro.screens
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,10 +31,9 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.shopkaro.data.models.ProductResponse
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier, navigateToProduct: (id: Int) -> Unit) {
+fun HomeScreen(navigateToProduct: (id: Int) -> Unit) {
     val viewmodel: HomeViewModel = hiltViewModel()
     val products = viewmodel.products.collectAsState()
     Scaffold(

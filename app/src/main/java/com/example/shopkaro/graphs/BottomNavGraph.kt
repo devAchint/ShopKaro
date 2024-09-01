@@ -19,8 +19,8 @@ fun BottomNavGraph(navController: NavHostController, modifier: Modifier) {
         route = Graph.BOTTOM,
         startDestination = Graph.HOME,
     ) {
-        homeNavGraph(navController, modifier)
-        profileNavGraph(modifier)
+        homeNavGraph(navController)
+        profileNavGraph(navController)
         cartNavGraph(navController)
     }
 }

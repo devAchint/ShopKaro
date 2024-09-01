@@ -13,10 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +30,11 @@ import com.example.shopkaro.ui.theme.BoxColor
 import com.example.shopkaro.ui.theme.Purple80
 
 @Composable
-fun ProfileScreen(profileUiState: ProfileUiState, modifier: Modifier, signOut: () -> Unit) {
+fun ProfileScreen(
+    profileUiState: ProfileUiState,
+    signOut: () -> Unit,
+    navigateToOrders: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,12 +58,14 @@ fun ProfileScreen(profileUiState: ProfileUiState, modifier: Modifier, signOut: (
 
         Spacer(modifier = Modifier.height(40.dp))
         Text(
-            text = "Actions", modifier = Modifier
+            text = "Actions",color = Color.Black,  modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth()
         )
         Spacer(modifier = Modifier.height(10.dp))
-        ProfileItem(R.drawable.orders, "My orders", true, RoundedClip.Top)
+        ProfileItem(R.drawable.orders, "My orders", true, RoundedClip.Top) {
+            navigateToOrders()
+        }
         ProfileItem(
             R.drawable.support,
             "Support",
@@ -67,7 +73,7 @@ fun ProfileScreen(profileUiState: ProfileUiState, modifier: Modifier, signOut: (
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "Actions", modifier = Modifier
+            text = "Actions", color = Color.Black, modifier = Modifier
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth()
         )
@@ -125,7 +131,7 @@ fun ProfileItem(
                     .height(24.dp)
             )
             Spacer(modifier = Modifier.width(12.dp))
-            Text(text = title, fontSize = 16.sp)
+            Text(text = title, fontSize = 16.sp, color = Color.Black)
 
         }
         if (isDivider) {

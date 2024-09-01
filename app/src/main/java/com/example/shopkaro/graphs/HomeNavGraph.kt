@@ -14,14 +14,13 @@ import com.example.shopkaro.screens.ProductScreen
 import com.example.shopkaro.screens.product_detail.ProductDetailScreen
 import com.example.shopkaro.screens.product_detail.ProductDetailViewModel
 
-fun NavGraphBuilder.homeNavGraph(navController: NavHostController, modifier: Modifier) {
+fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
     navigation(
         route = Graph.HOME,
         startDestination = HomeScreens.HomeScreen.route,
     ) {
         composable(HomeScreens.HomeScreen.route) {
             HomeScreen(
-                modifier = modifier,
                 navigateToProduct = {id->
                     navController.navigate(HomeScreens.ProductDetailScreen.passArgs(id))
                 }

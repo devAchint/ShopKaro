@@ -40,7 +40,7 @@ import com.example.shopkaro.ui.theme.BoxColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartScreen(navigateToCheckOut: () -> Unit) {
+fun CartScreen(navigateToAddress: () -> Unit) {
     Scaffold(topBar = {
         TopAppBar(title = { Text(text = "My Cart") }, navigationIcon = {
             IconButton(onClick = { }) {
@@ -57,7 +57,7 @@ fun CartScreen(navigateToCheckOut: () -> Unit) {
                 .padding(16.dp)
         ) {
             EmptyCart(modifier = Modifier.align(Alignment.Center))
-            CheckOut(navigateToCheckOut)
+            CheckOut(navigateToAddress)
         }
     }
 }
@@ -140,7 +140,7 @@ fun CartItem() {
 }
 
 @Composable
-fun CheckOut(navigateToCheckOut: () -> Unit) {
+fun CheckOut(navigateToAddress: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -161,12 +161,12 @@ fun CheckOut(navigateToCheckOut: () -> Unit) {
             )
         }
         Button(
-            onClick = { navigateToCheckOut() },
+            onClick = { navigateToAddress() },
             modifier = Modifier
                 .height(48.dp),
             shape = RoundedCornerShape(10.dp)
         ) {
-            Text(text = "Check Out", fontSize = 16.sp)
+            Text(text = "Continue", fontSize = 16.sp)
         }
     }
 }
