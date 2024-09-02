@@ -6,8 +6,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.shopkaro.screens.OrderDetailScreen
-import com.example.shopkaro.screens.OrdersScreen
+import com.example.shopkaro.screens.order_detail.OrderDetailScreen
+import com.example.shopkaro.screens.order_detail.OrderDetailViewModel
+import com.example.shopkaro.screens.orders.OrdersScreen
+import com.example.shopkaro.screens.orders.OrdersViewModel
 import com.example.shopkaro.screens.profile.ProfileScreen
 import com.example.shopkaro.screens.profile.ProfileViewModel
 
@@ -30,12 +32,20 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
             )
         }
         composable(ProfileScreens.OrdersScreen.route) {
-            OrdersScreen(navigateToOrderDetail = {
-                navController.navigate(ProfileScreens.OrderDetailScreen.route)
-            })
+            val orderViewModel: OrdersViewModel = hiltViewModel()
+            val orders = orderViewModel.orders.collectAsState()
+            OrdersScreen(
+                orders = orders.value,
+                navigateToOrderDetail = { orderId ->
+                    navController.navigate(ProfileScreens.OrderDetailScreen.passArgs(orderId))
+                }
+            )
         }
         composable(ProfileScreens.OrderDetailScreen.route) {
-            OrderDetailScreen()
+            val orderDetailViewModel: OrderDetailViewModel = hiltViewModel()
+            val orderDetailUiState = orderDetailViewModel.orderDetailUiState.collectAsState()
+
+            OrderDetailScreen(orderDetailState = orderDetailUiState.value)
         }
     }
 }
@@ -43,5 +53,9 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
 sealed class ProfileScreens(val route: String) {
     object ProfileScreen : ProfileScreens("profile")
     object OrdersScreen : ProfileScreens("orders")
-    object OrderDetailScreen : ProfileScreens("order_detail")
+    object OrderDetailScreen : ProfileScreens("order_detail/{orderId}") {
+        fun passArgs(orderId: String): String {
+            return "order_detail/$orderId"
+        }
+    }
 }

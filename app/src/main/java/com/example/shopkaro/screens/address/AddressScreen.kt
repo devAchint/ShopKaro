@@ -135,6 +135,8 @@ fun AddressScreen(
                         phoneNumber = phoneNumber,
                         city = city,
                         state = state,
+                        houseNumber = houseNo,
+                        streetAddress = street
                     )
                     addOrder(shippingDetails)
                 },

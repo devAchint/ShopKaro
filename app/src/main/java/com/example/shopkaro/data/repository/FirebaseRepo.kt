@@ -2,7 +2,7 @@ package com.example.shopkaro.data.repository
 
 import android.util.Log
 import com.example.shopkaro.data.models.CartItem
-import com.example.shopkaro.data.models.OrderModel
+import com.example.shopkaro.data.models.OrderResponse
 import com.example.shopkaro.data.models.ShippingDetailModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -96,12 +96,12 @@ class FirebaseRepo @Inject constructor(
         }
     }
 
-    suspend fun addOrder(shippingDetails: ShippingDetailModel) :String?{
+    suspend fun addOrder(shippingDetails: ShippingDetailModel): String? {
         val userId = firebaseAuth.currentUser?.uid ?: throw Exception("User not logged in")
         val cartRef = firebaseDatabase.getReference("cart/$userId")
         val orderRef = firebaseDatabase.getReference("orders/$userId")
         val newOrder = orderRef.push()
-        val order = OrderModel(
+        val order = OrderResponse(
             orderId = newOrder.key ?: "",
             items = cartRef.get().await().children.mapNotNull { it.getValue(CartItem::class.java) },
             orderStatus = "Pending",
@@ -112,30 +112,41 @@ class FirebaseRepo @Inject constructor(
         return newOrder.key
     }
 
-    suspend fun placeOrder(orderId:String){
+    suspend fun placeOrder(orderId: String) {
         val userId = firebaseAuth.currentUser?.uid ?: throw Exception("User not logged in")
         val orderRef = firebaseDatabase.getReference("orders/$userId")
         val query = orderRef.orderByChild("orderId").equalTo(orderId).get().await()
-        if (query.exists()){
-            val order=query.children.first().getValue(OrderModel::class.java)
+        if (query.exists()) {
+            val order = query.children.first().getValue(OrderResponse::class.java)
             order?.let {
-                val updatedOrder=it.copy(orderStatus = "Success")
+                val updatedOrder = it.copy(orderStatus = "Success")
                 query.children.first().ref.setValue(updatedOrder).await()
                 clearCart()
             }
         }
     }
 
-    suspend fun clearCart(){
-        val userId=firebaseAuth.currentUser?.uid
-        val cartRef=firebaseDatabase.getReference("cart/$userId")
+    suspend fun clearCart() {
+        val userId = firebaseAuth.currentUser?.uid
+        val cartRef = firebaseDatabase.getReference("cart/$userId")
         cartRef.removeValue().await()
     }
 
-    suspend fun fetchOrders(): List<OrderModel> {
+    suspend fun fetchOrders(): List<OrderResponse> {
         val userId = firebaseAuth.currentUser?.uid ?: throw Exception("User not logged in")
         val orderRef = firebaseDatabase.getReference("orders/$userId")
         val snapshot = orderRef.get().await()
-        return snapshot.children.mapNotNull { it.getValue(OrderModel::class.java) }
+        return snapshot.children.mapNotNull { it.getValue(OrderResponse::class.java) }
+    }
+
+    suspend fun fetchOrder(orderId: String): OrderResponse? {
+        val userId = firebaseAuth.currentUser?.uid ?: throw Exception("User not logged in")
+        val orderRef = firebaseDatabase.getReference("orders/$userId")
+        val query = orderRef.orderByChild("orderId").equalTo(orderId).get().await()
+        if (query.exists()) {
+            val order = query.children.first().getValue(OrderResponse::class.java)
+            return order
+        }
+        return null
     }
 }
