@@ -10,6 +10,17 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.navigation.NavBackStackEntry
+import com.example.shopkaro.data.models.CartModel
+import java.math.BigDecimal
+import java.math.RoundingMode
+
+fun List<CartModel>.totalCartPrice(): Double {
+    var total = 0.0
+    forEach {
+        total += it.productQuantity * it.productPrice
+    }
+    return BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toDouble()
+}
 
 fun AnimatedContentTransitionScope<NavBackStackEntry>.enterTrans(): EnterTransition {
     return fadeIn(

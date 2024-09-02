@@ -2,6 +2,7 @@ package com.example.shopkaro.di
 
 import com.example.shopkaro.NetworkApi
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,5 +33,11 @@ class NetworkModule {
     @Provides
     fun providesAuth(): FirebaseAuth {
         return FirebaseAuth.getInstance()
+    }
+
+    @Singleton
+    @Provides
+    fun providesDatabase():FirebaseDatabase{
+        return FirebaseDatabase.getInstance()
     }
 }

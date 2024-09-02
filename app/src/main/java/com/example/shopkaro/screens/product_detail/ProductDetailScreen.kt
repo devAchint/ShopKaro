@@ -1,5 +1,6 @@
 package com.example.shopkaro.screens.product_detail
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,24 +18,27 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Scaffold
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,12 +47,18 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.shopkaro.R
 import com.example.shopkaro.ui.theme.Star
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProductDetailScreen(productDetailState: ProductDetailState,navigateToCart:()->Unit) {
+fun ProductDetailScreen(
+    productDetailState: ProductDetailState,
+    navigateToCart: () -> Unit,
+    addToCart: (productId: Int) -> Unit,
+    removeFromCart: (productId: Int) -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = "Home") }, actions = {
-                IconButton(onClick = { navigateToCart()}) {
+                IconButton(onClick = { navigateToCart() }) {
                     Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "")
                 }
             })
@@ -57,11 +67,15 @@ fun ProductDetailScreen(productDetailState: ProductDetailState,navigateToCart:()
     { innerPadding ->
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
+                .background(Color.White)
                 .padding(innerPadding)
         ) {
             if (productDetailState.isLoading) {
                 Text(text = "Loading", modifier = Modifier.align(Alignment.Center))
+            }
+            productDetailState.error?.let {
+                Text(text = it, modifier = Modifier.align(Alignment.Center))
             }
             productDetailState.product?.let { product ->
                 Column(
@@ -127,9 +141,8 @@ fun ProductDetailScreen(productDetailState: ProductDetailState,navigateToCart:()
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(text = product.description, color = Color.Black.copy(alpha = 0.5f))
                     }
-                    var quantity by rememberSaveable {
-                        mutableIntStateOf(0)
-                    }
+
+                    val quantity = rememberUpdatedState(productDetailState.cartQuantity)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -137,12 +150,17 @@ fun ProductDetailScreen(productDetailState: ProductDetailState,navigateToCart:()
                     ) {
                         Text(text = "₹${product.price}", fontSize = 24.sp, color = Color.Black)
                         Button(
-                            onClick = { if (quantity == 0) quantity += 1 },
+                            onClick = {
+                                if (quantity.value == 0) {
+                                    //quantity += 1
+                                    addToCart(product.id)
+                                }
+                            },
                             modifier = Modifier
                                 .height(48.dp),
                             shape = RoundedCornerShape(10.dp),
                         ) {
-                            if (quantity != 0) {
+                            if (quantity.value != 0) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.Center,
@@ -152,11 +170,14 @@ fun ProductDetailScreen(productDetailState: ProductDetailState,navigateToCart:()
                                         contentDescription = "Decrease quantity",
                                         modifier = Modifier
                                             .size(24.dp)
-                                            .clickable { quantity -= 1 }
+                                            .clickable {
+                                                // quantity -= 1
+                                                removeFromCart(product.id)
+                                            }
 
                                     )
                                     Text(
-                                        text = "$quantity",
+                                        text = "${quantity.value}",
                                         fontSize = 16.sp,
                                         modifier = Modifier.padding(horizontal = 16.dp)
                                     )
@@ -165,7 +186,10 @@ fun ProductDetailScreen(productDetailState: ProductDetailState,navigateToCart:()
                                         contentDescription = "Decrease quantity",
                                         modifier = Modifier
                                             .size(24.dp)
-                                            .clickable { quantity += 1 }
+                                            .clickable {
+                                                //  quantity += 1
+                                                addToCart(product.id)
+                                            }
                                     )
                                 }
                             } else {

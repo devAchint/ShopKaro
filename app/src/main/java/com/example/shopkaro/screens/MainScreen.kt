@@ -2,9 +2,9 @@ package com.example.shopkaro.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,11 +46,11 @@ fun BottomBar(navController: NavHostController) {
         BottomNavScreens.ProfileScreen
     )
 
-    BottomNavigation {
+    NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
         items.forEach { screen ->
-            BottomNavigationItem(
+            NavigationBarItem(
                 selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
                 onClick = {
                     navController.navigate(screen.route) {
@@ -58,10 +58,10 @@ fun BottomBar(navController: NavHostController) {
                             saveState = true
                         }
                         launchSingleTop = true
-                        restoreState = true
                     }
                 },
-                icon = { Icon(screen.icon, contentDescription = "") })
+                icon = { Icon(screen.icon, contentDescription = "") }
+            )
         }
 
     }

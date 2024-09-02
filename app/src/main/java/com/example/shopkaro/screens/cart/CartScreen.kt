@@ -1,7 +1,8 @@
-package com.example.shopkaro.screens
+package com.example.shopkaro.screens.cart
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,11 +15,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,12 +37,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.example.shopkaro.R
+import com.example.shopkaro.data.models.CartModel
 import com.example.shopkaro.ui.theme.BoxColor
+import com.example.shopkaro.utils.totalCartPrice
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CartScreen(navigateToAddress: () -> Unit) {
+fun CartScreen(
+    cartUiState: CartUiState,
+    navigateToAddress: () -> Unit,
+    addToCart: (productId: Int) -> Unit,
+    removeFromCart: (productId: Int) -> Unit
+) {
     Scaffold(topBar = {
         TopAppBar(title = { Text(text = "My Cart") }, navigationIcon = {
             IconButton(onClick = { }) {
@@ -55,27 +67,52 @@ fun CartScreen(navigateToAddress: () -> Unit) {
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp)
+                .padding(bottom = 50.dp)
         ) {
-            EmptyCart(modifier = Modifier.align(Alignment.Center))
-            CheckOut(navigateToAddress)
+            if (cartUiState.isLoading) {
+                Text(text = "Loading...", modifier = Modifier.align(Alignment.Center))
+            } else {
+                if (cartUiState.carts.isEmpty()) {
+                    EmptyCart(modifier = Modifier.align(Alignment.Center))
+                } else {
+                    Column {
+                        LazyColumn(modifier = Modifier.weight(1f)) {
+                            items(cartUiState.carts) {
+                                CartItem(cart = it, addToCart, removeFromCart)
+                                Spacer(modifier = Modifier.height(16.dp))
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                        CheckOut(cartUiState.carts.totalCartPrice()) {
+                            navigateToAddress()
+                        }
+                    }
+                }
+            }
+
         }
     }
 }
 
+
 @Composable
-fun CartItem() {
+fun CartItem(
+    cart: CartModel,
+    addToCart: (productId: Int) -> Unit,
+    removeFromCart: (productId: Int) -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .height(116.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(BoxColor)
+            .background(Color.White)
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row {
             Image(
-                Icons.Filled.ShoppingCart, contentDescription = null,
+                rememberAsyncImagePainter(cart.productImage), contentDescription = null,
                 modifier = Modifier
                     .width(48.dp)
                     .fillMaxHeight()
@@ -85,7 +122,7 @@ fun CartItem() {
                 modifier = Modifier.fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
-                Text(text = "Product name", fontSize = 16.sp, color = Color.Black)
+                Text(text = cart.productName.take(20), fontSize = 16.sp, color = Color.Black)
                 Text(
                     text = "category name",
                     fontSize = 12.sp,
@@ -96,14 +133,17 @@ fun CartItem() {
                         modifier = Modifier
                             .size(20.dp)
                             .clip(CircleShape)
-                            .background(Color.White)
-                            .padding(4.dp),
+                            .background(BoxColor)
+                            .padding(4.dp)
+                            .clickable {
+                                removeFromCart(cart.productId)
+                            },
                         tint = Color.Black,
                         painter = painterResource(id = R.drawable.ic_minus),
                         contentDescription = ""
                     )
                     Text(
-                        text = "0",
+                        text = cart.productQuantity.toString(),
                         color = Color.Black,
                         modifier = Modifier.padding(horizontal = 8.dp)
                     )
@@ -111,8 +151,11 @@ fun CartItem() {
                         modifier = Modifier
                             .size(20.dp)
                             .clip(CircleShape)
-                            .background(Color.White)
-                            .padding(4.dp),
+                            .background(BoxColor)
+                            .padding(4.dp)
+                            .clickable {
+                                addToCart(cart.productId)
+                            },
                         tint = Color.Black,
                         painter = painterResource(id = R.drawable.ic_plus),
                         contentDescription = ""
@@ -126,10 +169,15 @@ fun CartItem() {
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            Text(text = "1,84,000", color = Color.Black)
-            Text(text = "x 1", color = Color.Black)
+            Text(text = "₹${cart.productPrice}", color = Color.Black)
+            Text(text = "x ${cart.productQuantity}", color = Color.Black)
             Text(
-                text = "1,84,000",
+                text = "₹${
+                    BigDecimal(cart.productPrice * cart.productQuantity).setScale(
+                        2,
+                        RoundingMode.HALF_UP
+                    ).toDouble()
+                }",
                 fontSize = 16.sp,
                 color = Color.Blue,
                 fontWeight = FontWeight.Bold
@@ -140,7 +188,7 @@ fun CartItem() {
 }
 
 @Composable
-fun CheckOut(navigateToAddress: () -> Unit) {
+fun CheckOut(cartValue: Double, navigateToAddress: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -154,7 +202,7 @@ fun CheckOut(navigateToAddress: () -> Unit) {
             Text(text = "Total:", color = Color.Black)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "₹2,00,000",
+                text = "₹$cartValue",
                 color = Color.Blue,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold

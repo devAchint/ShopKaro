@@ -1,7 +1,6 @@
 package com.example.shopkaro.graphs
 
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -21,7 +20,7 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
     ) {
         composable(HomeScreens.HomeScreen.route) {
             HomeScreen(
-                navigateToProduct = {id->
+                navigateToProduct = { id ->
                     navController.navigate(HomeScreens.ProductDetailScreen.passArgs(id))
                 }
             )
@@ -34,9 +33,14 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
         )) {
             val productDetailViewModel: ProductDetailViewModel = hiltViewModel()
             val productDetailState = productDetailViewModel.productDetailUiState.collectAsState()
-            ProductDetailScreen(productDetailState.value, navigateToCart = {
-                navController.navigate(Graph.CART)
-            })
+            ProductDetailScreen(
+                productDetailState = productDetailState.value,
+                navigateToCart = {
+                    navController.navigate(Graph.CART)
+                },
+                addToCart = { productId -> productDetailViewModel.addToCart(productId) },
+                removeFromCart ={ productId->productDetailViewModel.removeFromCart(productId)}
+            )
         }
     }
 }
