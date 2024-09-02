@@ -11,22 +11,26 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.example.shopkaro.R
+import com.example.shopkaro.utils.enterTrans
+import com.example.shopkaro.utils.exitTrans
+import com.example.shopkaro.utils.popEnterTrans
+import com.example.shopkaro.utils.popExitTrans
 
 @Composable
 fun BottomNavGraph(navController: NavHostController, modifier: Modifier) {
     NavHost(
         navController = navController,
         route = Graph.BOTTOM,
-        startDestination = Graph.HOME,
+        startDestination = Graph.HOME
     ) {
-        homeNavGraph(navController)
+        homeNavGraph(navController,modifier)
         profileNavGraph(navController)
-        cartNavGraph(navController)
+        cartNavGraph(navController,modifier)
     }
 }
 
-sealed class BottomNavScreens(val route: String, @StringRes val resId: Int, val icon: ImageVector) {
-    object HomeScreen : BottomNavScreens(Graph.HOME, R.string.home, Icons.Filled.Home)
-    object CartScreen : BottomNavScreens(Graph.CART, R.string.cart, Icons.Filled.ShoppingCart)
-    object ProfileScreen : BottomNavScreens(Graph.PROFILE, R.string.profile, Icons.Filled.Person)
+sealed class BottomNavScreens(val route: String, val title: String, val icon: ImageVector) {
+    object HomeScreen : BottomNavScreens(Graph.HOME, "Home", Icons.Filled.Home)
+    object CartScreen : BottomNavScreens(Graph.CART, "Cart", Icons.Filled.ShoppingCart)
+    object ProfileScreen : BottomNavScreens(Graph.PROFILE, "Profile", Icons.Filled.Person)
 }

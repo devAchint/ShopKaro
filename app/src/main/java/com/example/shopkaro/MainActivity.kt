@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ShopKaroTheme {
+            ShopKaroTheme(darkTheme = false) {
                 val currentUser = firebaseAuth.currentUser
                 val navController = rememberNavController()
                 RootNavGraph(navController = navController, currentUser)
@@ -31,35 +31,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-//@Composable
-//fun App(navController: NavHostController, modifier: Modifier = Modifier) {
-//    NavHost(
-//        navController = navController,
-//        startDestination = Screens.MainScreen.route,
-//        modifier = modifier,
-//        enterTransition = { enterTrans() },
-//        exitTransition = { exitTrans() },
-//        popEnterTransition = { popEnterTrans() },
-//        popExitTransition = { popExitTrans() }
-//    ) {
-//        composable(
-//            route = Screens.MainScreen.route
-//        ) {
-//            val lifecycleOwner = LocalLifecycleOwner.current
-//
-//        }
-//
-//        composable(route = Screens.ProductScreen.route) {
-//
-//        }
-//        composable(route = Screens.CategoryScreen.route) {
-//
-//        }
-//        composable(route = Screens.LoginScreen.route) {
-//
-//        }
-//        composable(route = Screens.RegisterScreen.route) {
-//
-//        }
-//    }
-//}

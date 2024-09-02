@@ -1,6 +1,7 @@
 package com.example.shopkaro.graphs
 
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -14,7 +15,7 @@ import com.example.shopkaro.screens.cart.CartViewModel
 import com.example.shopkaro.screens.payment.PaymentScreen
 import com.example.shopkaro.screens.payment.PaymentViewModel
 
-fun NavGraphBuilder.cartNavGraph(navController: NavHostController) {
+fun NavGraphBuilder.cartNavGraph(navController: NavHostController,modifier: Modifier) {
     navigation(
         route = Graph.CART,
         startDestination = CartScreens.CartScreen.route,
@@ -23,6 +24,7 @@ fun NavGraphBuilder.cartNavGraph(navController: NavHostController) {
             val cartViewModel: CartViewModel = hiltViewModel()
             val cartUiState = cartViewModel.cartUiState.collectAsState()
             CartScreen(
+                modifier=modifier,
                 cartUiState = cartUiState.value,
                 navigateToAddress = {
                     navController.navigate(CartScreens.AddressScreen.route)
@@ -45,6 +47,7 @@ fun NavGraphBuilder.cartNavGraph(navController: NavHostController) {
                 },
                 navigateToPayment = { orderId ->
                     navController.navigate(CartScreens.PaymentScreen.passArgs(orderId))
+                    addressViewModel.resetAddressUiState()
                 }
             )
         }
@@ -64,7 +67,14 @@ fun NavGraphBuilder.cartNavGraph(navController: NavHostController) {
                 }
             )
         }
-        composable(CartScreens.OrderPlacedScreen.route) { OrderPlacedScreen() }
+        composable(CartScreens.OrderPlacedScreen.route) {
+            OrderPlacedScreen(
+                navigateToHome = {
+                    navController.popBackStack(route = HomeScreens.HomeScreen.route, inclusive = false)
+                },
+                navigateToOrderDetail = {}
+            )
+        }
     }
 }
 

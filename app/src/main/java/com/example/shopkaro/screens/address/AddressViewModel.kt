@@ -41,4 +41,7 @@ class AddressViewModel @Inject constructor(private val firebaseRepo: FirebaseRep
         }
     }
 
+    fun resetAddressUiState(){
+        _addressUiState.value = AddressUiState()
+    }
 }

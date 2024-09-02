@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,26 +50,23 @@ import java.math.RoundingMode
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
+    modifier: Modifier,
     cartUiState: CartUiState,
     navigateToAddress: () -> Unit,
     addToCart: (productId: Int) -> Unit,
     removeFromCart: (productId: Int) -> Unit
 ) {
     Scaffold(topBar = {
-        TopAppBar(title = { Text(text = "My Cart") }, navigationIcon = {
-            IconButton(onClick = { }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
-                )
-            }
-        })
+        TopAppBar(
+            title = { Text(text = "My Cart") }
+        )
     }) { innerPadding ->
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp)
-                .padding(bottom = 50.dp)
+
         ) {
             if (cartUiState.isLoading) {
                 Text(text = "Loading...", modifier = Modifier.align(Alignment.Center))

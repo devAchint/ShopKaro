@@ -6,6 +6,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -60,7 +61,8 @@ fun BottomBar(navController: NavHostController) {
                         launchSingleTop = true
                     }
                 },
-                icon = { Icon(screen.icon, contentDescription = "") }
+                icon = { Icon(screen.icon, contentDescription = "") },
+                label = { Text(text = screen.title) }
             )
         }
 

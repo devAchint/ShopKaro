@@ -13,7 +13,7 @@ fun RootNavGraph(navController: NavHostController, currentUser: FirebaseUser?) {
     NavHost(
         navController = navController,
         route = Graph.ROOT,
-        startDestination = if (currentUser != null) "main" else Graph.AUTHENTICATION
+        startDestination = if (currentUser != null) "main" else Graph.AUTHENTICATION,
     ) {
         authNavGraph(navController)
         composable(route = "main") {

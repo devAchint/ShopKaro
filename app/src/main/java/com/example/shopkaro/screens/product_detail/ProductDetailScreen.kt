@@ -1,6 +1,5 @@
 package com.example.shopkaro.screens.product_detail
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +18,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -29,22 +29,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.shopkaro.R
+import com.example.shopkaro.data.models.ProductResponse
+import com.example.shopkaro.data.models.Rating
 import com.example.shopkaro.ui.theme.Star
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,11 +54,22 @@ fun ProductDetailScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(text = "Home") }, actions = {
-                IconButton(onClick = { navigateToCart() }) {
-                    Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "")
+            TopAppBar(
+                title = { Text(text = "Product Detail") },
+                navigationIcon = {
+                    IconButton(onClick = { }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = ""
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { navigateToCart() }) {
+                        Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "")
+                    }
                 }
-            })
+            )
         }
     )
     { innerPadding ->
@@ -71,140 +79,161 @@ fun ProductDetailScreen(
                 .background(Color.White)
                 .padding(innerPadding)
         ) {
-            if (productDetailState.isLoading) {
-                Text(text = "Loading", modifier = Modifier.align(Alignment.Center))
-            }
+
             productDetailState.error?.let {
                 Text(text = it, modifier = Modifier.align(Alignment.Center))
             }
-            productDetailState.product?.let { product ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.SpaceBetween
-                ) {
+            if (productDetailState.isLoading) {
+                Text(text = "Loading", modifier = Modifier.align(Alignment.Center))
+            } else {
+                productDetailState.product?.let { product ->
                     Column(
                         modifier = Modifier
-                            .weight(1f)
-                            .verticalScroll(rememberScrollState())
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp),
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Image(
-                            painter = rememberAsyncImagePainter(product.image),
-                            contentDescription = null,
+                        Column(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .height(300.dp)
-                                .clip(RoundedCornerShape(12.dp))
-
-
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = product.title,
-                            fontSize = 24.sp,
-                            color = Color.Black,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                                .weight(1f)
+                                .verticalScroll(rememberScrollState())
                         ) {
-                            Text(
-                                text = "Save 20%",
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Image(
+                                painter = rememberAsyncImagePainter(product.image),
+                                contentDescription = null,
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .background(Color.Red)
-                                    .padding(vertical = 2.dp, horizontal = 6.dp)
+                                    .fillMaxWidth()
+                                    .height(300.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+
+
                             )
-                            Row {
-                                Icon(
-                                    Icons.Filled.Star, contentDescription = null, tint = Star,
-                                    modifier = Modifier
-                                        .width(20.dp)
-                                        .height(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(text = "${product.rating.rate}", color = Color.Black)
-                                Text(
-                                    text = "(${product.rating.count} Reviews)",
-                                    color = Color.Black.copy(alpha = 0.5f)
-                                )
-                            }
-
-                        }
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(text = "Information", color = Color.Black)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = product.description, color = Color.Black.copy(alpha = 0.5f))
-                    }
-
-                    val quantity = rememberUpdatedState(productDetailState.cartQuantity)
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(text = "₹${product.price}", fontSize = 24.sp, color = Color.Black)
-                        Button(
-                            onClick = {
-                                if (quantity.value == 0) {
-                                    //quantity += 1
-                                    addToCart(product.id)
-                                }
-                            },
-                            modifier = Modifier
-                                .height(48.dp),
-                            shape = RoundedCornerShape(10.dp),
-                        ) {
-                            if (quantity.value != 0) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center,
-                                ) {
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_minus), // Replace with your minus icon resource
-                                        contentDescription = "Decrease quantity",
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .clickable {
-                                                // quantity -= 1
-                                                removeFromCart(product.id)
-                                            }
-
-                                    )
-                                    Text(
-                                        text = "${quantity.value}",
-                                        fontSize = 16.sp,
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                    Icon(
-                                        painter = painterResource(id = R.drawable.ic_plus), // Replace with your minus icon resource
-                                        contentDescription = "Decrease quantity",
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .clickable {
-                                                //  quantity += 1
-                                                addToCart(product.id)
-                                            }
-                                    )
-                                }
-                            } else {
-                                Text(text = "Add to Cart", fontSize = 16.sp)
-                            }
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(
+                                text = product.title,
+                                fontSize = 24.sp,
+                                color = Color.Black,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            CouponAndRating(rating = product.rating)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Text(text = "Information", color = Color.Black)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(text = product.description, color = Color.Black.copy(alpha = 0.5f))
                         }
 
+                        AddCartLayout(
+                            addToCart = addToCart,
+                            removeFromCart = removeFromCart,
+                            product = product,
+                            productDetailState = productDetailState
+                        )
                     }
-                    Spacer(modifier = Modifier.height(16.dp))
+                } ?: run {
+                    Text(text = "error")
                 }
-            } ?: run {
-                Text(text = "error")
             }
         }
 
+    }
+}
+
+@Composable
+fun CouponAndRating(rating: Rating) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "Save 20%",
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color.Red)
+                .padding(vertical = 2.dp, horizontal = 6.dp)
+        )
+        Row {
+            Icon(
+                Icons.Filled.Star, contentDescription = null, tint = Star,
+                modifier = Modifier
+                    .width(20.dp)
+                    .height(20.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = "${rating.rate}", color = Color.Black)
+            Text(
+                text = "(${rating.count} Reviews)",
+                color = Color.Black.copy(alpha = 0.5f)
+            )
+        }
 
     }
+}
+
+@Composable
+fun AddCartLayout(
+    addToCart: (productId: Int) -> Unit,
+    removeFromCart: (productId: Int) -> Unit,
+    product: ProductResponse,
+    productDetailState: ProductDetailState
+) {
+    val quantity = rememberUpdatedState(productDetailState.cartQuantity)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = "₹${product.price}", fontSize = 24.sp, color = Color.Black)
+        Button(
+            onClick = {
+                if (quantity.value == 0) {
+                    //quantity += 1
+                    addToCart(product.id)
+                }
+            },
+            modifier = Modifier
+                .height(48.dp),
+            shape = RoundedCornerShape(10.dp),
+        ) {
+            if (quantity.value != 0) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_minus), // Replace with your minus icon resource
+                        contentDescription = "Decrease quantity",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                // quantity -= 1
+                                removeFromCart(product.id)
+                            }
+
+                    )
+                    Text(
+                        text = "${quantity.value}",
+                        fontSize = 16.sp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_plus), // Replace with your minus icon resource
+                        contentDescription = "Decrease quantity",
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                //  quantity += 1
+                                addToCart(product.id)
+                            }
+                    )
+                }
+            } else {
+                Text(text = "Add to Cart", fontSize = 16.sp)
+            }
+        }
+
+    }
+    Spacer(modifier = Modifier.height(16.dp))
 }

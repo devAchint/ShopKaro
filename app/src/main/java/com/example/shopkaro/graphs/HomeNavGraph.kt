@@ -1,6 +1,7 @@
 package com.example.shopkaro.graphs
 
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -13,13 +14,14 @@ import com.example.shopkaro.screens.ProductScreen
 import com.example.shopkaro.screens.product_detail.ProductDetailScreen
 import com.example.shopkaro.screens.product_detail.ProductDetailViewModel
 
-fun NavGraphBuilder.homeNavGraph(navController: NavHostController) {
+fun NavGraphBuilder.homeNavGraph(navController: NavHostController,modifier: Modifier) {
     navigation(
         route = Graph.HOME,
         startDestination = HomeScreens.HomeScreen.route,
     ) {
         composable(HomeScreens.HomeScreen.route) {
             HomeScreen(
+                modifier = modifier,
                 navigateToProduct = { id ->
                     navController.navigate(HomeScreens.ProductDetailScreen.passArgs(id))
                 }

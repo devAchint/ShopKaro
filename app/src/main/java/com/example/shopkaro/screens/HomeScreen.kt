@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,7 +35,7 @@ import com.example.shopkaro.data.models.ProductResponse
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navigateToProduct: (id: Int) -> Unit) {
+fun HomeScreen(modifier: Modifier,navigateToProduct: (id: Int) -> Unit) {
     val viewmodel: HomeViewModel = hiltViewModel()
     val products = viewmodel.products.collectAsState()
     Scaffold(
@@ -42,25 +44,26 @@ fun HomeScreen(navigateToProduct: (id: Int) -> Unit) {
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .background(Color.White)
                 .padding(innerPadding)
-                .padding(bottom = 50.dp)
+
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-            Image(
-                painter = rememberAsyncImagePainter("https://i.pinimg.com/564x/76/a2/ae/76a2ae7967725a93fb0cd42a1a28a8ba.jpg"),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .height(180.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.FillBounds
-            )
-            Spacer(modifier = Modifier.height(20.dp))
             LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                item(span = { GridItemSpan(2) }) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Image(
+                        painter = rememberAsyncImagePainter("https://i.pinimg.com/564x/76/a2/ae/76a2ae7967725a93fb0cd42a1a28a8ba.jpg"),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(16.dp)),
+                        contentScale = ContentScale.FillBounds
+                    )
+                }
                 items(products.value) {
                     Product(product = it, navigateToProduct)
                 }

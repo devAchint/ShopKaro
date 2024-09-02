@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieAnimation
@@ -26,9 +25,8 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.shopkaro.R
 
 
-@Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun OrderPlacedScreen() {
+fun OrderPlacedScreen(navigateToHome: () -> Unit, navigateToOrderDetail: () -> Unit) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.order_success))
     Scaffold { innerPadding ->
         Column(
@@ -48,6 +46,7 @@ fun OrderPlacedScreen() {
             Spacer(modifier = Modifier.height(40.dp))
             Button(
                 onClick = {
+                    navigateToOrderDetail()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -59,6 +58,7 @@ fun OrderPlacedScreen() {
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
+                    navigateToHome()
                 },
                 modifier = Modifier
                     .fillMaxWidth()

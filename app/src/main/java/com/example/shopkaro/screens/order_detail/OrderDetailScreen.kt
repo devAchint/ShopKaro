@@ -194,11 +194,11 @@ fun OrderImageCollage(images: List<String>) {
                     modifier = Modifier
                         .size(48.dp)
                         .padding(2.dp)
-                        .background(Color.Gray)
+
                 ) {
                     Text(
                         text = "+$extraImagesCount",
-                        color = Color.White,
+                        color = Color.Black,
                         textAlign = TextAlign.Center
                     )
                 }
