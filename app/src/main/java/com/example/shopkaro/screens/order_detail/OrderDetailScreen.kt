@@ -96,7 +96,7 @@ fun OrderedItem(productName: String, totalPrice: Double, productImage: List<Stri
         Column(modifier = Modifier.weight(1f)) {
             Text(text = productName, maxLines = 2, fontSize = 24.sp)
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "$totalPrice", fontSize = 16.sp)
+            Text(text = "₹$totalPrice", fontSize = 16.sp)
         }
         Spacer(modifier = Modifier.width(20.dp))
         OrderImageCollage(images = productImage)

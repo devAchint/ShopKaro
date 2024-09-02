@@ -50,4 +50,9 @@ class PaymentViewModel @Inject constructor(
     fun changePaymentMethod(paymentMethod: String) {
         _paymentUiState.update { it.copy(paymentMethod = paymentMethod) }
     }
+
+    fun resetPaymentUiState() {
+        _paymentUiState.update { PaymentUiState() }
+
+    }
 }

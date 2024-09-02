@@ -1,5 +1,6 @@
 package com.example.shopkaro.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,9 @@ import com.example.shopkaro.R
 
 @Composable
 fun OrderPlacedScreen(navigateToHome: () -> Unit, navigateToOrderDetail: () -> Unit) {
+    BackHandler {
+        navigateToHome()
+    }
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.order_success))
     Scaffold { innerPadding ->
         Column(

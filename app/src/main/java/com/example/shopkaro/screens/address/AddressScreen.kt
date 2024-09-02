@@ -1,5 +1,6 @@
 package com.example.shopkaro.screens.address
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,11 +22,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.shopkaro.data.models.ShippingDetailModel
@@ -37,6 +41,7 @@ fun AddressScreen(
     addOrder: (ShippingDetailModel) -> Unit,
     navigateToPayment: (String) -> Unit
 ) {
+    val context = LocalContext.current
     if (addressUiState.addressProcessed && addressUiState.orderId != null) {
         navigateToPayment(addressUiState.orderId)
     }
@@ -65,6 +70,12 @@ fun AddressScreen(
             var state by rememberSaveable { mutableStateOf("") }
             var houseNo by rememberSaveable { mutableStateOf("") }
             var street by rememberSaveable { mutableStateOf("") }
+
+            val isAddressFilled = remember {
+                derivedStateOf {
+                    fullName.isNotBlank() && phoneNumber.isNotBlank() && city.isNotBlank() && state.isNotBlank() && houseNo.isNotBlank() && street.isNotBlank()
+                }
+            }
 
             OutlinedTextField(
                 value = fullName,
@@ -130,15 +141,19 @@ fun AddressScreen(
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
-                    val shippingDetails = ShippingDetailModel(
-                        name = fullName,
-                        phoneNumber = phoneNumber,
-                        city = city,
-                        state = state,
-                        houseNumber = houseNo,
-                        streetAddress = street
-                    )
-                    addOrder(shippingDetails)
+                    if (isAddressFilled.value) {
+                        val shippingDetails = ShippingDetailModel(
+                            name = fullName,
+                            phoneNumber = phoneNumber,
+                            city = city,
+                            state = state,
+                            houseNumber = houseNo,
+                            streetAddress = street
+                        )
+                        addOrder(shippingDetails)
+                    } else {
+                        Toast.makeText(context, "Fill Required Details", Toast.LENGTH_SHORT).show()
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

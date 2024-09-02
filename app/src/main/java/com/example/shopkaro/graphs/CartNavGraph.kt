@@ -15,7 +15,7 @@ import com.example.shopkaro.screens.cart.CartViewModel
 import com.example.shopkaro.screens.payment.PaymentScreen
 import com.example.shopkaro.screens.payment.PaymentViewModel
 
-fun NavGraphBuilder.cartNavGraph(navController: NavHostController,modifier: Modifier) {
+fun NavGraphBuilder.cartNavGraph(navController: NavHostController, modifier: Modifier) {
     navigation(
         route = Graph.CART,
         startDestination = CartScreens.CartScreen.route,
@@ -24,7 +24,7 @@ fun NavGraphBuilder.cartNavGraph(navController: NavHostController,modifier: Modi
             val cartViewModel: CartViewModel = hiltViewModel()
             val cartUiState = cartViewModel.cartUiState.collectAsState()
             CartScreen(
-                modifier=modifier,
+                modifier = modifier,
                 cartUiState = cartUiState.value,
                 navigateToAddress = {
                     navController.navigate(CartScreens.AddressScreen.route)
@@ -54,6 +54,7 @@ fun NavGraphBuilder.cartNavGraph(navController: NavHostController,modifier: Modi
         composable(CartScreens.PaymentScreen.route) {
             val paymentViewModel: PaymentViewModel = hiltViewModel()
             val paymentUiState = paymentViewModel.paymentUiState.collectAsState()
+            val orderId = it.arguments?.getString("orderId")
             PaymentScreen(
                 paymentUiState = paymentUiState.value,
                 changePaymentMethod = {
@@ -61,18 +62,29 @@ fun NavGraphBuilder.cartNavGraph(navController: NavHostController,modifier: Modi
                 },
                 placeOrder = {
                     paymentViewModel.placeOrder()
+                    paymentViewModel.resetPaymentUiState()
                 },
                 navigateToOrderPlaced = {
-                    navController.navigate(CartScreens.OrderPlacedScreen.route)
+                    orderId?.let {
+                        navController.navigate(CartScreens.OrderPlacedScreen.passArgs(it))
+                    }
                 }
             )
         }
         composable(CartScreens.OrderPlacedScreen.route) {
+            val orderId = it.arguments?.getString("orderId")
             OrderPlacedScreen(
                 navigateToHome = {
-                    navController.popBackStack(route = HomeScreens.HomeScreen.route, inclusive = false)
+                    navController.popBackStack(
+                        route = HomeScreens.HomeScreen.route,
+                        inclusive = false
+                    )
                 },
-                navigateToOrderDetail = {}
+                navigateToOrderDetail = {
+                    orderId?.let {
+                        navController.navigate(ProfileScreens.OrderDetailScreen.passArgs(it))
+                    }
+                }
             )
         }
     }
@@ -87,5 +99,9 @@ sealed class CartScreens(val route: String) {
         }
     }
 
-    object OrderPlacedScreen : CartScreens("order_placed")
+    object OrderPlacedScreen : CartScreens("order_placed/{orderId}") {
+        fun passArgs(orderId: String): String {
+            return "order_placed/$orderId"
+        }
+    }
 }

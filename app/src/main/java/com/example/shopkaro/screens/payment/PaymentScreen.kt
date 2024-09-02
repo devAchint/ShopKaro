@@ -137,8 +137,8 @@ fun PaymentMethod(
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
             .background(BoxColor)
-            .padding(12.dp)
-            .clickable { onSelectedChange(methodName) },
+            .clickable { onSelectedChange(methodName) }
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
