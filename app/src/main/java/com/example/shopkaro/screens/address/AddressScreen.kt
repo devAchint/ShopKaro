@@ -1,4 +1,4 @@
-package com.example.shopkaro.screens
+package com.example.shopkaro.screens.address
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,10 +28,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.shopkaro.data.models.ShippingDetailModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddressScreen(navigateToPayment: () -> Unit) {
+fun AddressScreen(
+    addressUiState: AddressUiState,
+    addOrder: (ShippingDetailModel) -> Unit,
+    navigateToPayment: (String) -> Unit
+) {
+    if (addressUiState.addressProcessed && addressUiState.orderId != null) {
+        navigateToPayment(addressUiState.orderId)
+    }
     Scaffold(topBar = {
         TopAppBar(
             title = { Text(text = "Address") },
@@ -52,6 +60,11 @@ fun AddressScreen(navigateToPayment: () -> Unit) {
                 .padding(16.dp)
         ) {
             var fullName by rememberSaveable { mutableStateOf("") }
+            var phoneNumber by rememberSaveable { mutableStateOf("") }
+            var city by rememberSaveable { mutableStateOf("") }
+            var state by rememberSaveable { mutableStateOf("") }
+            var houseNo by rememberSaveable { mutableStateOf("") }
+            var street by rememberSaveable { mutableStateOf("") }
 
             OutlinedTextField(
                 value = fullName,
@@ -65,8 +78,6 @@ fun AddressScreen(navigateToPayment: () -> Unit) {
                 shape = RoundedCornerShape(8.dp),
             )
             Spacer(modifier = Modifier.height(16.dp))
-            var phoneNumber by rememberSaveable { mutableStateOf("") }
-
             OutlinedTextField(
                 value = phoneNumber,
                 modifier = Modifier
@@ -81,8 +92,6 @@ fun AddressScreen(navigateToPayment: () -> Unit) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(modifier = Modifier.fillMaxWidth()) {
-                var city by rememberSaveable { mutableStateOf("") }
-
                 OutlinedTextField(
                     value = city,
                     modifier = Modifier
@@ -95,7 +104,7 @@ fun AddressScreen(navigateToPayment: () -> Unit) {
                     shape = RoundedCornerShape(8.dp),
                 )
                 Spacer(modifier = Modifier.width(16.dp))
-                var state by rememberSaveable { mutableStateOf("") }
+
 
                 OutlinedTextField(
                     value = state,
@@ -110,45 +119,50 @@ fun AddressScreen(navigateToPayment: () -> Unit) {
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            var houseNo by rememberSaveable { mutableStateOf("") }
-
-            OutlinedTextField(
-                value = houseNo,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                onValueChange = {
-                    houseNo = it
-                },
-                singleLine = true,
-                placeholder = { Text(text = "House Number") },
-                shape = RoundedCornerShape(8.dp),
-            )
+            AddressInput(text = houseNo, onTextChange = { houseNo = it }, placeHolder = "House No")
             Spacer(modifier = Modifier.height(16.dp))
-            var street by rememberSaveable { mutableStateOf("") }
 
-            OutlinedTextField(
-                value = street,
-                modifier = Modifier
-                    .fillMaxWidth(),
-                onValueChange = {
-                    street = it
-                },
-                singleLine = true,
-                placeholder = { Text(text = "Street Name") },
-                shape = RoundedCornerShape(8.dp),
+            AddressInput(
+                text = street,
+                onTextChange = { street = it },
+                placeHolder = "Street Address"
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { navigateToPayment() },
+                onClick = {
+                    val shippingDetails = ShippingDetailModel(
+                        name = fullName,
+                        phoneNumber = phoneNumber,
+                        city = city,
+                        state = state,
+                    )
+                    addOrder(shippingDetails)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(text = "Go to Payment")
+                val buttonText =
+                    if (addressUiState.addressProcessing) "Loading" else "Go to Payment"
+                Text(text = buttonText)
             }
         }
 
     }
+}
 
+@Composable
+fun AddressInput(text: String, onTextChange: (String) -> Unit, placeHolder: String) {
+    OutlinedTextField(
+        value = text,
+        modifier = Modifier
+            .fillMaxWidth(),
+        onValueChange = {
+            onTextChange(it)
+        },
+        singleLine = true,
+        placeholder = { Text(text = placeHolder) },
+        shape = RoundedCornerShape(8.dp),
+    )
 }

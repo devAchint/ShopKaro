@@ -1,5 +1,7 @@
-package com.example.shopkaro.screens
+package com.example.shopkaro.screens.payment
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,12 +29,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,7 +46,21 @@ import com.example.shopkaro.ui.theme.BoxColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PaymentScreen(navigateToOrderPlaced: () -> Unit) {
+fun PaymentScreen(
+    paymentUiState: PaymentUiState,
+    changePaymentMethod: (String) -> Unit,
+    placeOrder: () -> Unit,
+    navigateToOrderPlaced: () -> Unit
+) {
+    val context = LocalContext.current
+    paymentUiState.error?.let {
+        Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
+        Log.d("MYDEBUG", it.toString())
+    }
+
+    if (paymentUiState.paymentProcessed) {
+        navigateToOrderPlaced()
+    }
     Scaffold(topBar = {
         TopAppBar(
             title = { Text(text = "Payment") },
@@ -69,11 +86,9 @@ fun PaymentScreen(navigateToOrderPlaced: () -> Unit) {
                     PaymentMethodModel(R.drawable.credit_card_icon, "Credit/Debit Card"),
                     PaymentMethodModel(R.drawable.bank_icon, "Bank Transfer"),
                     PaymentMethodModel(R.drawable.upi_icon, "Upi"),
+                )
+            val selectedPaymentMethod by rememberUpdatedState(paymentUiState.paymentMethod)
 
-                    )
-            val selectedPaymentMethod = remember {
-                mutableStateOf("Cash on delivery")
-            }
             Column {
                 Text(text = "Choose Payment method")
                 Spacer(modifier = Modifier.height(8.dp))
@@ -82,9 +97,9 @@ fun PaymentScreen(navigateToOrderPlaced: () -> Unit) {
                         PaymentMethod(
                             icon = it.icon,
                             methodName = it.methodName,
-                            selected = selectedPaymentMethod.value
+                            selected = selectedPaymentMethod
                         ) {
-                            selectedPaymentMethod.value = it
+                            changePaymentMethod(it)
                         }
                         Spacer(modifier = Modifier.height(16.dp))
                     }
@@ -92,14 +107,17 @@ fun PaymentScreen(navigateToOrderPlaced: () -> Unit) {
             }
             Button(
                 onClick = {
-                    navigateToOrderPlaced()
+                    placeOrder()
                 },
+                enabled = !paymentUiState.paymentProcessing,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
                 shape = RoundedCornerShape(8.dp)
             ) {
-                Text(text = "Confirm Payment", fontSize = 16.sp)
+                val buttonText =
+                    if (paymentUiState.paymentProcessing) "Loading" else "Confirm Payment"
+                Text(text = buttonText, fontSize = 16.sp)
             }
         }
 
