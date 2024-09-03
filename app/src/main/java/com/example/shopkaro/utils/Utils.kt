@@ -13,6 +13,15 @@ import androidx.navigation.NavBackStackEntry
 import com.example.shopkaro.data.models.CartModel
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+fun formatOrderDate(timestamp: Long): String {
+    val date = Date(timestamp)
+    val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+    return dateFormat.format(date)
+}
 
 fun List<CartModel>.totalCartPrice(): Double {
     var total = 0.0

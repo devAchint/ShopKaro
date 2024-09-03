@@ -1,6 +1,6 @@
 package com.example.shopkaro.di
 
-import com.example.shopkaro.NetworkApi
+import com.example.shopkaro.data.remote.NetworkApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import dagger.Module

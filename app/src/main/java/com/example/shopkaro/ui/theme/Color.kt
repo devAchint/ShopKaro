@@ -12,3 +12,4 @@ val Pink40 = Color(0xFF7D5260)
 
 val BoxColor = Color(0xfff3f3f3)
 val Star = Color(0xFFFF9800)
+val GreenColor=Color(0xFF4CAF50)

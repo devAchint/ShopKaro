@@ -1,6 +1,6 @@
 package com.example.shopkaro.data.repository
 
-import com.example.shopkaro.NetworkApi
+import com.example.shopkaro.data.remote.NetworkApi
 import com.example.shopkaro.data.models.ProductResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
