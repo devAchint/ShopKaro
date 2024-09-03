@@ -8,11 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -71,7 +73,7 @@ fun LoginScreen(
                     .align(Alignment.CenterHorizontally),
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(40.dp))
             var emailText by rememberSaveable { mutableStateOf("") }
 
             TextField(
@@ -125,13 +127,25 @@ fun LoginScreen(
                         login(emailText, passwordText)
                     }
                 },
+                enabled = loginUiState.isLoading.not(),
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
                     .height(50.dp),
                 shape = RoundedCornerShape(10.dp),
             ) {
-                Text(text = if (loginUiState.isLoading) "Loading" else "Sign In", fontSize = 18.sp)
+                if (loginUiState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(24.dp),
+                        strokeWidth = 2.5.dp
+                    )
+                } else {
+                    Text(
+                        text = "Sign In",
+                        fontSize = 18.sp
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(modifier = Modifier.clickable { navigateToRegister() },
@@ -145,5 +159,4 @@ fun LoginScreen(
             )
         }
     }
-
 }

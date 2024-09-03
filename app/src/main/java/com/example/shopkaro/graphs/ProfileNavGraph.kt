@@ -1,6 +1,8 @@
 package com.example.shopkaro.graphs
 
+import androidx.activity.ComponentActivity
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -18,13 +20,18 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController) {
         route = Graph.PROFILE,
         startDestination = ProfileScreens.ProfileScreen.route,
     ) {
+
         composable(ProfileScreens.ProfileScreen.route) {
             val profileViewModel: ProfileViewModel = hiltViewModel()
             val profileUiState = profileViewModel.profileUiState.collectAsState()
+            val context = LocalContext.current
             ProfileScreen(
                 profileUiState = profileUiState.value,
                 signOut = {
                     profileViewModel.signOut()
+                    if (context is ComponentActivity) {
+                        context.finishAffinity()
+                    }
                 },
                 navigateToOrders = {
                     navController.navigate(ProfileScreens.OrdersScreen.route)

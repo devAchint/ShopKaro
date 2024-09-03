@@ -1,7 +1,6 @@
 package com.example.shopkaro.screens.orders
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -28,7 +27,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.example.shopkaro.ui.theme.BoxColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,9 +67,9 @@ fun OrderItem(order: OrdersListItem, navigateToOrderDetail: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
-            .background(BoxColor)
-            .padding(12.dp)
+            .border(1.dp, Color.LightGray, RoundedCornerShape(12.dp))
             .clickable { navigateToOrderDetail() }
+            .padding(12.dp)
     ) {
         Image(
             painter = rememberAsyncImagePainter(order.productImage), contentDescription = null,

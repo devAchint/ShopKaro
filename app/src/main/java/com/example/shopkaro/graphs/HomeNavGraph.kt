@@ -10,11 +10,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.shopkaro.screens.HomeScreen
-import com.example.shopkaro.screens.ProductScreen
 import com.example.shopkaro.screens.product_detail.ProductDetailScreen
 import com.example.shopkaro.screens.product_detail.ProductDetailViewModel
 
-fun NavGraphBuilder.homeNavGraph(navController: NavHostController,modifier: Modifier) {
+fun NavGraphBuilder.homeNavGraph(navController: NavHostController, modifier: Modifier) {
     navigation(
         route = Graph.HOME,
         startDestination = HomeScreens.HomeScreen.route,
@@ -27,7 +26,6 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController,modifier: Modi
                 }
             )
         }
-        composable(HomeScreens.ProductScreen.route) { ProductScreen() }
         composable(HomeScreens.ProductDetailScreen.route, arguments = listOf(
             navArgument("productId") {
                 type = NavType.IntType
@@ -41,7 +39,7 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController,modifier: Modi
                     navController.navigate(Graph.CART)
                 },
                 addToCart = { productId -> productDetailViewModel.addToCart(productId) },
-                removeFromCart ={ productId->productDetailViewModel.removeFromCart(productId)}
+                removeFromCart = { productId -> productDetailViewModel.removeFromCart(productId) }
             )
         }
     }
@@ -49,7 +47,6 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController,modifier: Modi
 
 sealed class HomeScreens(val route: String) {
     object HomeScreen : HomeScreens("home")
-    object ProductScreen : HomeScreens("product")
     object ProductDetailScreen : HomeScreens("product_detail/{productId}") {
         fun passArgs(id: Int): String {
             return "product_detail/$id"

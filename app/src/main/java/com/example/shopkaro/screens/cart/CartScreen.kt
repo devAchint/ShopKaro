@@ -2,6 +2,7 @@ package com.example.shopkaro.screens.cart
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,19 +14,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -33,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -109,14 +105,17 @@ fun CartItem(
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
                 rememberAsyncImagePainter(cart.productImage), contentDescription = null,
                 modifier = Modifier
-                    .width(48.dp)
-                    .fillMaxHeight()
+                    .size(96.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .border(1.dp, Color.LightGray, RoundedCornerShape(12.dp))
+                    .padding(8.dp)
+
             )
-            Spacer(modifier = Modifier.width(10.dp))
+            Spacer(modifier = Modifier.width(12.dp))
             Column(
                 modifier = Modifier.fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceEvenly
@@ -177,9 +176,8 @@ fun CartItem(
                         RoundingMode.HALF_UP
                     ).toDouble()
                 }",
-                fontSize = 16.sp,
-                color = Color.Blue,
-                fontWeight = FontWeight.Bold
+                fontSize = 18.sp,
+                color = Color.Black
             )
         }
     }
@@ -202,8 +200,8 @@ fun CheckOut(cartValue: Double, navigateToAddress: () -> Unit) {
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "₹$cartValue",
-                color = Color.Blue,
-                fontSize = 16.sp,
+                color = Color.Black,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
         }

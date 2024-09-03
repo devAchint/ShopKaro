@@ -8,9 +8,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -62,7 +64,7 @@ fun RegisterScreen(
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(40.dp))
             var emailText by rememberSaveable { mutableStateOf("") }
 
             TextField(
@@ -143,6 +145,7 @@ fun RegisterScreen(
                         registerUser(emailText, confirmPasswordText)
                     }
                 },
+                enabled = registerUiState.isLoading.not(),
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
@@ -150,7 +153,7 @@ fun RegisterScreen(
                 shape = RoundedCornerShape(10.dp),
             ) {
                 if (registerUiState.isLoading) {
-                    Text(text = "Loading...", fontSize = 18.sp)
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.5.dp)
                 } else {
                     Text(text = "Sign Up", fontSize = 18.sp)
                 }

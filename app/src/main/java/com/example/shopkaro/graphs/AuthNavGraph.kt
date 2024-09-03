@@ -15,11 +15,17 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
         composable(route = AuthScreen.Login.route) {
             val loginViewModel: RegisterViewModel = hiltViewModel()
             val loginUiState = loginViewModel.registerUiState.collectAsState()
-            LoginScreen(loginUiState = loginUiState.value,
+            LoginScreen(
+                loginUiState = loginUiState.value,
                 navigateToRegister = {
                     navController.navigate(AuthScreen.Register.route)
                 }, navigateToHome = {
-                    navController.navigate("main")
+                    navController.navigate("main") {
+                        popUpTo(AuthScreen.Login.route) {
+                            inclusive = true
+                        }
+                    }
+                    loginViewModel.resetRegisterState()
                 }, login = { email, password ->
                     loginViewModel.loginUser(email, password)
                 }

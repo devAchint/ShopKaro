@@ -22,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -84,7 +85,7 @@ fun ProductDetailScreen(
                 Text(text = it, modifier = Modifier.align(Alignment.Center))
             }
             if (productDetailState.isLoading) {
-                Text(text = "Loading", modifier = Modifier.align(Alignment.Center))
+                CircularProgressIndicator(modifier = Modifier.size(48.dp).align(Alignment.Center), strokeWidth = 2.5.dp)
             } else {
                 productDetailState.product?.let { product ->
                     Column(
@@ -152,7 +153,8 @@ fun CouponAndRating(rating: Rating) {
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
                 .background(Color.Red)
-                .padding(vertical = 2.dp, horizontal = 6.dp)
+                .padding(vertical = 2.dp, horizontal = 6.dp),
+            color = Color.White
         )
         Row {
             Icon(

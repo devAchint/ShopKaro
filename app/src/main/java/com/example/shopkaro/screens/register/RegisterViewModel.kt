@@ -78,6 +78,6 @@ class RegisterViewModel @Inject constructor(private val firebaseRepo: FirebaseRe
     }
 
     fun resetRegisterState() {
-        _registerUiState.update { it.copy(success = false, isLoading = false, errorMessage = null) }
+        _registerUiState.update { RegisterUiState() }
     }
 }
